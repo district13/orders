@@ -1,13 +1,13 @@
 <?php
 namespace model\table\Gateway;
 
-require_once 'SqlAdapter.php';
+require_once 'MysqlDriver.php';
 
 function query()
 {
 	$args = func_get_args();
 	
-	$func = 'SqlAdapter\\' . array_shift($args);
+	$func = 'MysqlDriver\\' . array_shift($args);
 	$link = get_connect(array_shift($args));
 	array_unshift($args, $link);
 	return call_user_func_array($func, $args);
