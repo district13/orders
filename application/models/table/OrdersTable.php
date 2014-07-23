@@ -7,9 +7,9 @@ use model\table\Gateway;
 const DB = 'orders',
 	  TABLE = 'orders';
 
-function select($where)
+function select($where, $lock = false)
 {
-	return Gateway\query('select', DB, TABLE, $where);
+	return Gateway\query('select', DB, TABLE, $where, $lock);
 }
 
 function insert($data)

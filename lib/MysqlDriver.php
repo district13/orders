@@ -2,11 +2,11 @@
 namespace MysqlDriver;
 
 use model\table\UsersTable\update;
-function select($connect, $table, $where = array())
+function select($connect, $table, $where = array(), $lock = false)
 {		
 	$sqlWhere = getWhere($where);
 	$sql = "select * from $table $sqlWhere";
-	
+	if($lock) $sql .= " for update";
 	$query = mysqli_query($connect, $sql);
 	$data = array();
 	while($row = mysqli_fetch_assoc($query))

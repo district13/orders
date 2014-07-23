@@ -40,7 +40,11 @@ function run($order, $executor, $commission)
 
 function runProcess($executor, $order)
 {
-	$rowsUpdatedUsers =  Executors\update(array("money" => $executor["money"]), $executor['id']);
+	$whereOrders = array("id" => $order['id'], "status" => 0);
+	OrdersTable\select($whereOrders, true);
 	$rowsUpdatedOrders = OrdersTable\update(array("status" => 1), array("id" => $order['id'], "status" => 0));
+	
+	UsersTable\select(array("id" => $executor['id']), true);
+	$rowsUpdatedUsers =  Executors\update(array("money" => $executor["money"]), $executor['id']);
 	return $rowsUpdatedUsers && $rowsUpdatedOrders;
 }

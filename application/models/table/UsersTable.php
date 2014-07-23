@@ -7,9 +7,9 @@ use model\table\Gateway;
 const DB = 'users',
 	  TABLE = 'users';
 
-function select($where)
+function select($where, $lock)
 {
-	return Gateway\query('select', DB, TABLE, $where);
+	return Gateway\query('select', DB, TABLE, $where, $lock);
 }
 
 function selectOne($where)
