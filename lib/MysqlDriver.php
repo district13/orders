@@ -21,7 +21,6 @@ function insert($connect, $table, $data)
 	$columns = implode(',', array_keys($data));
 	$values = quote(array_values($data));
 	$sql = "insert into $table ($columns) values ($values)";
-echo $sql;	
 	return mysqli_query($connect, $sql);
 }
 
@@ -37,6 +36,8 @@ function update($connect, $table, $data, $where)
 	$set = implode(', ', $set);
 	$sql = "update $table set $set $sql_where";
 	mysqli_query($connect, $sql);
+	$count = mysqli_affected_rows($connect);
+	return $count;
 }
 
 function getWhere($where = array())
