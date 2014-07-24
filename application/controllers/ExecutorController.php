@@ -20,11 +20,9 @@ function work($params)
 {
 $executor_id = 1;
 $params["order_id"] = 1;
-	$order = Orders\get($params['order_id']);
-	$executor = Executors\get($executor_id);
 	$commission = Agent\getCommission();
 //sleep(15);
-	Orders\run($order, $executor, $commission);
+	Orders\run($params["order_id"], $executor_id, $commission);
 //	Executors = Users\workOrder($order, $user, $commission);
 // 	var_dump($isComplete);
 	

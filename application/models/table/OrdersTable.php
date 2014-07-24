@@ -22,7 +22,7 @@ function update($data, $where)
 	return Gateway\query('update', DB, TABLE, $data, $where);
 }
 
-function selectOne($where)
+function selectOne($where, $lock)
 {
-	return current(Gateway\query('select', DB, TABLE, $where));
+	return current(select($where, $lock));
 }

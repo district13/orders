@@ -28,23 +28,23 @@ function get($order_id)
 	return OrdersTable\selectOne(array('id' => $order_id));
 }
 
-function run($order, $executor, $commission)
+function run($order_id, $executor_id, $commission)
 {
-	$executor["money"] += $order["price"] * $commission;
-	
 	$tables = array(OrdersTable\TABLE, UsersTable\TABLE);
 	$func = 'model\Orders\runProcess';
-	$args = array($executor, $order);
+	$args = array($order_id, $executor_id, $commission);
 	return XaCoordinator\run($tables, $func, $args);
 }
 
-function runProcess($executor, $order)
+function runProcess($order_id, $executor_id, $commission)
 {
-	$whereOrders = array("id" => $order['id'], "status" => 0);
-	OrdersTable\select($whereOrders, true);
+	$whereOrders = array("id" => $order_id, "status" => 0);
+	$order = OrdersTable\selectOne($whereOrders, true);
 	$rowsUpdatedOrders = OrdersTable\update(array("status" => 1), array("id" => $order['id'], "status" => 0));
-	
-	UsersTable\select(array("id" => $executor['id']), true);
+
+	$executor = UsersTable\selectOne(array("id" => $executor_id), true);
+	$executor["money"] += $order["price"] * $commission;
 	$rowsUpdatedUsers =  Executors\update(array("money" => $executor["money"]), $executor['id']);
+	
 	return $rowsUpdatedUsers && $rowsUpdatedOrders;
 }

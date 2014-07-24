@@ -9,13 +9,16 @@ function run($tables, $func, $args)
 	$connections = array();
 	foreach ($tables as $table)
 	{
-		$connections[] = Gateway\get_connect($table);
+		$connect= Gateway\get_connect($table);
+		mysqli_query($connect, "SET AUTOCOMMIT=0");
+		$connections[] = $connect;
 	}
 
 	$xid = getXid();
 	query($connections, "XA START", $xid);
 	$process = call_user_func_array($func, $args);
 	query($connections, "XA END", $xid);
+	
 	if(!$process) return rollback($connections, $xid);
 	
 	foreach ($connections as $connect)

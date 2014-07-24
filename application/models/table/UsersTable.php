@@ -7,14 +7,14 @@ use model\table\Gateway;
 const DB = 'users',
 	  TABLE = 'users';
 
-function select($where, $lock)
+function select($where, $lock = false)
 {
 	return Gateway\query('select', DB, TABLE, $where, $lock);
 }
 
-function selectOne($where)
+function selectOne($where, $lock = false)
 {
-	return current(Gateway\query('select', DB, TABLE, $where));
+	return current(select($where, $lock));
 }
 
 function update($data, $where)
