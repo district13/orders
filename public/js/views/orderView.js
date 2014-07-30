@@ -5,7 +5,7 @@ define([
 	
 	var OrderView = Backbone.View.extend({
         events: {
-            "click.executor_work" : "executorWork"
+            "click .executor_work" : "executorWork"
         },
 
         tagName: 'li',
