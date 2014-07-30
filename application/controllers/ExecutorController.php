@@ -15,21 +15,29 @@ use model\Agent;
 require_once 'models/Executors.php';
 use model\Executors;
 
-function index()
+function orders()
 {
 	$orders = Orders\getAllActive();
+	foreach ($orders as $order)
+	{
+		$ordersArray[] = array(
+				"id" => $order['id'],
+				"name" => $order['name'],
+				"price" => $order['price'],
+		);
+	}
+	echo json_encode($ordersArray);
+}
+
+function index()
+{
 	View\render('executor/index.phtml');
 }
 
 function work($params)
 {
-$executor_id = 1;
-$params["order_id"] = 1;
 	$commission = Agent\getCommission();
-//sleep(15);
-	Orders\run($params["order_id"], $executor_id, $commission);
-//	Executors = Users\workOrder($order, $user, $commission);
-// 	var_dump($isComplete);
-	
+	$status = Orders\run($params["order_id"], $_SESSION['user_id'], $commission);
+	echo json_encode(array("status" => $status));
 }
 

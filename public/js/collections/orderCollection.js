@@ -3,7 +3,8 @@ define([
     "models/orderModel"
 ], function(Backbone, Order){
 	var OrderCollection = Backbone.Collection.extend({
-		model: Order
+		model: Order,
+		url: '/executor/orders' 
 	});
 	return OrderCollection;
 });

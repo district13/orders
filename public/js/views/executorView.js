@@ -9,8 +9,9 @@ define([
     	tagName: 'ul',
 
 		initialize: function(){
-var initOrders = [{id: 1, name: '12345', price: 23323}, {id: 2, name: '2223', price: 3232}];
-			this.orderCollection = new OrderCollection(initOrders);
+			this.orderCollection = new OrderCollection();
+			this.listenTo(this.orderCollection, 'reset', this.render);			
+			this.orderCollection.fetch({reset: true});
 		},
 		
 		render: function(){
@@ -24,4 +25,3 @@ var initOrders = [{id: 1, name: '12345', price: 23323}, {id: 2, name: '2223', pr
 
     return ExecutorView;
 });
-
