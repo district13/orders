@@ -32,6 +32,19 @@ define([
                 	if(typeof callback === 'function') callback();
                 },
             });
+        },
+        
+        logout: function(callback){
+            var that = this;
+            $.ajax({
+            	  dataType: "json",
+            	  url: "/index/logout",
+            	  type: "post",
+            	  success: function(res){
+                	that.set({'user': {}, is_auth: false});
+                	if(typeof callback === 'function') callback();
+                },
+            });
         }
         
     });

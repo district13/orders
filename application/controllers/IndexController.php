@@ -26,3 +26,9 @@ function login($params)
 			"role" => $user['role'],
 	));
 }
+
+function logout()
+{
+	AuthService\logout();
+	echo json_encode(array("status" => 1));
+}

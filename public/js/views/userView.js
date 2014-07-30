@@ -8,7 +8,9 @@ define([
     var LoginView = Backbone.View.extend({
 
     	events: {
-            "click #login_button" : "onLogin"
+            "click #login_button": "onLogin",
+            "click #logout": "onLogout"
+            	
         },
 
         initialize: function () {
@@ -24,6 +26,13 @@ define([
             });
         },
 
+        onLogout: function(event) {
+            event.preventDefault();
+            app.session.logout(function(response){
+            	app.router.navigate("/", true);
+            });
+        },
+        
         render:function () {
         	if(app.session.get('is_auth')) {
             	var template = _.template(UserPanelTpl); 

@@ -23,6 +23,8 @@ define([
         render:function () {
         	if(app.session.get('is_auth'))
         		this.$el.html(_.template(MenuTpl));
+        	else
+        		this.$el.html('');
             return this;
         }
 
