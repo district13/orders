@@ -15,7 +15,7 @@ define([
         	if(app.session.get('is_auth')) {
             	var template = _.template(UserPanelTpl); 
                 this.$el.html(template(
-                		app.session.get('user')
+                		app.session.get('user').toJSON()
                 ));
         	} else 
         		this.$el.html(_.template(LoginTpl));
