@@ -16,8 +16,6 @@ function addorderform()
 
 function addorder($params)
 {
-	$name = "test455454";
-	$price = 334;
-$user_id = 1;	
-	$result = Orders\add($name, $price, $user_id);
+	$result = Orders\add($params['name'], $params['price'], $_SESSION['user_id']);
+	echo json_encode(array("status" => $result));
 }
