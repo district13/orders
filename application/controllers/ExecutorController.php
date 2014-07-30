@@ -1,5 +1,10 @@
 <?php
 namespace ExecutorController;
+require_once 'View.php';
+use View;
+
+require_once 'services/AuthService.php';
+use services\AuthService;
 
 require_once 'models/Orders.php';
 use model\Orders;
@@ -13,7 +18,7 @@ use model\Executors;
 function index()
 {
 	$orders = Orders\getAllActive();
-print_r($orders);	
+	View\render('executor/index.phtml');
 }
 
 function work($params)

@@ -4,9 +4,14 @@ namespace CustomerController;
 require_once 'models/Orders.php';
 use model\Orders;
 
-function index()
+require_once 'View.php';
+use View;
+
+
+function addorderform()
 {
-	echo "customer/index";
+	$orders = Orders\getAllActive();
+	View\render('customer/addorderform.phtml');
 }
 
 function addorder($params)
