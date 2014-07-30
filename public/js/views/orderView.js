@@ -1,16 +1,16 @@
 define([
     "backbone",
-    "text!templates/order/show.html"
-], function(Backbone, ShowTpl){
+    "text!templates/order/one.html"
+], function(Backbone, OneTpl){
 	
 	var OrderView = Backbone.View.extend({
         events: {
             "click .executor_work" : "executorWork"
         },
 
-        tagName: 'li',
+        tagName: 'tr',
 		render: function() {
-			var template = _.template(ShowTpl);
+			var template = _.template(OneTpl);
 	 		this.$el.html(template(this.model.toJSON()));
 	 		return this;
 		},

@@ -1,25 +1,17 @@
 define([
     "app",
     "backbone",
-    "collections/orderCollection",
-    "views/orderView"
-], function(app, Backbone, OrderCollection, OrderView){
+    "views/listOrderView",
+    "text!templates/order/listWrap.html"
+], function(app, Backbone, ListOrderView, ListWrapTpl){
 
     var ExecutorView = Backbone.View.extend({
-    	tagName: 'ul',
-
-		initialize: function(){
-			this.orderCollection = new OrderCollection();
-			this.listenTo(this.orderCollection, 'reset', this.render);			
-			this.orderCollection.fetch({reset: true});
-		},
-		
 		render: function(){
-			this.orderCollection.each(function(order){
-				var orderView = new OrderView({'model': order});
-				this.$el.append(orderView.render().el);
-			}, this)
-			return this;
+			var listContent = new ListOrderView().render().el;
+console.log(listContent);			
+	 		this.$el.html(_.template(ListWrapTpl));
+	 		this.$("#wrap_thead").after(listContent);
+	 		return this;
 		}
     });
 
