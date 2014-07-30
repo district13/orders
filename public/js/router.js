@@ -1,7 +1,8 @@
 define([
     "app",
     "backbone",
-], function(app, Backbone){
+    "views/userView",
+], function(app, Backbone, UserView){
 
     var Router = Backbone.Router.extend({
         routes: {
@@ -9,7 +10,9 @@ define([
         },
         
 	    index: function() {
-console.log("router/index");	    	
+			var userView = new UserView();
+			$('#user').html(userView.render().$el);
+console.log("router/index");
 	    }, 
     });
 
