@@ -1,32 +1,39 @@
-<html>
-<head>
-	<title>Абстрактная система заказов</title>
-	<meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Абстрактная система заказов</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<script> 
+			var Viewer = {
+				id: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0?>,
+				role: <?php echo isset($_SESSION['role']) ? $_SESSION['role'] : 0?>,
+				name: <?php echo isset($_SESSION['name']) ? '"' . $_SESSION['name'] . '"' : '""'?>
+			}
+		</script>
+	</head>
 
-<script> 
-	var Viewer = {
-		id: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0?>,
-		role: <?php echo isset($_SESSION['role']) ? $_SESSION['role'] : 0?>,
-		name: <?php echo isset($_SESSION['name']) ? '"' . $_SESSION['name'] . '"' : '""'?>
-	}
-</script>
+	<body>
 	
+		<div class="navbar navbar-inverse  navbar-static-top navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand links" href="/">Abstract system order</a>
+				</div>
+				<div id="user" class="navbar-collapse collapse">
+				</div>
+			</div>
+		</div>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menu" class="col-sm-3 col-md-2 sidebar"></div>
+				<div id="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"></div>
+			</div>
+		</div>
+		<script src="/js/libs/require.js" data-main="/js/main.js"></script>
 	
-</head>
-
-
-<body>
-
-<div id="menu">
-</div>
-
-<div id="user"></div>
-
-<div id="content">
-	<?//=$content?>
-</div>
-
-<script src="/js/libs/require.js" data-main="/js/main.js"></script>
-
-</body>
+	</body>
 </html>

@@ -17,5 +17,11 @@ require(['app', 'router', 'models/sessionModel'], function(app, Router, Session)
 	app.session = new Session();
 	app.session.checkAuth(function(){
 		Backbone.history.start({'pushState': true});
+		
+	    $("body").on("click", "a.links", function(event) {
+	        event.preventDefault();
+	        app.router.navigate(event.currentTarget.pathname, true);
+	    });
+		
 	});
 });
