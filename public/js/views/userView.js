@@ -6,9 +6,22 @@ define([
 ], function(app, Backbone, LoginTpl, UserPanelTpl){
 
     var LoginView = Backbone.View.extend({
-        
+
+    	events: {
+            "click #login_button" : "onLogin"
+        },
+
         initialize: function () {
+            _.bindAll(this);
 			app.session.on("change:is_auth", this.render);
+        },
+        
+        onLogin: function(event) {
+            event.preventDefault();
+            var params = { name: this.$("#name").val(), pass: this.$("#pass").val() }
+            app.session.login(params, function(response){
+            	
+            });
         },
 
         render:function () {

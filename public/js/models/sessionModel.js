@@ -18,7 +18,22 @@ define([
             	that.set({'is_auth': false});
             }
         	if(typeof callback === 'function') callback();
+        },
+        
+        login: function(params, callback){
+            var that = this;
+            $.ajax({
+            	  dataType: "json",
+            	  url: "/index/login",
+            	  data: params,
+            	  type: "post",
+            	  success: function(res){
+                	that.set({'user': new UserModel(res), is_auth: true});
+                	if(typeof callback === 'function') callback();
+                },
+            });
         }
+        
     });
     
     return SessionModel;

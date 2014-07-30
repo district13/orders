@@ -19,5 +19,10 @@ function loginform()
 
 function login($params)
 {
-	AuthService\login($params["name"], $params["pass"]);
+	$user = AuthService\login($params["name"], $params["pass"]);
+	echo json_encode(array(
+			"id" => $user['id'],
+			"name" => $user['name'],
+			"role" => $user['role'],
+	));
 }
