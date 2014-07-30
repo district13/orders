@@ -7,12 +7,13 @@ define([
     var SessionModel = Backbone.Model.extend({
         defaults: {
             is_auth: 0,
+            user: {}
         },
 
         checkAuth: function(callback) {
             var that = this;
             if(Viewer.id) {
-            	that.set({'is_auth': true});
+            	that.set({'user': new UserModel(Viewer), 'is_auth': true});
             } else {
             	that.set({'is_auth': false});
             }

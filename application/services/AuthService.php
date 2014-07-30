@@ -9,7 +9,7 @@ function login($name, $pass)
 {
 	$user = current(UsersTable\select(array("name" => $name, "pass" => md5($pass))));
 	if(!$user) return false;
-	$_SESSION['user_id'] = $user['id'];
+	$_SESSION = array("user_id" => $user['id'], "name" => $user['name'], "role" => $user['role']);
 	return $user;
 }
 

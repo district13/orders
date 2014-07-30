@@ -2,8 +2,8 @@ define([
     "app",
     "backbone",
     "text!templates/login.html",
-
-], function(app, Backbone, LoginTpl){
+    "text!templates/userpanel.html",
+], function(app, Backbone, LoginTpl, UserPanelTpl){
 
     var LoginView = Backbone.View.extend({
         
@@ -12,7 +12,13 @@ define([
         },
 
         render:function () {
-            this.$el.html(_.template(LoginTpl));
+        	if(app.session.get('is_auth')) {
+            	var template = _.template(UserPanelTpl); 
+                this.$el.html(template(
+                		app.session.get('user')
+                ));
+        	} else 
+        		this.$el.html(_.template(LoginTpl));
             return this;
         }
 
