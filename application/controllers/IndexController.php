@@ -20,6 +20,4 @@ function loginform()
 function login($params)
 {
 	AuthService\login($params["name"], $params["pass"]);
-	print_r($_SESSION);
-	
 }

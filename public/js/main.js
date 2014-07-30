@@ -12,7 +12,11 @@ require.config({
     }
 
 });
-require(['app', 'router'], function(app, Router){
+require(['app', 'router', 'models/sessionModel'], function(app, Router, Session){
 	app.router = new Router();
-	Backbone.history.start({ pushState: true, root: '/' } );
+	app.session = new Session();
+	app.session.checkAuth(function(){
+console.log(app.session.get('is_auth'));
+		Backbone.history.start({'pushState': true});
+	});
 });
