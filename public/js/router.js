@@ -5,15 +5,19 @@ define([
     "views/menuView",
     "views/startPageView",
     "views/executorView",
-    "views/customerView"
+    "views/customerView",
+    "views/page404View",
 ], function(app, Backbone, UserView, MenuView, 
-		StartPageView, ExecutorView, CustomerView){
+		StartPageView, ExecutorView, CustomerView,
+		Page404View
+		){
 
     var Router = Backbone.Router.extend({
         routes: {
             "": "index",
             "executor": "executor",
-            "customer/addorderform": "customer"
+            "customer/addorderform": "customer",
+            '*default': '404'
         },
         
         _renderPage: function(View) {
@@ -35,6 +39,9 @@ define([
         
         customer: function() {
 	    	this._renderPage(new CustomerView());
+        },
+        404: function() {
+	    	this._renderPage(new Page404View());
         }
         
     });

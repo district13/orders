@@ -10,8 +10,7 @@ use View;
 
 function addorderform()
 {
-	$orders = Orders\getAllActive();
-	View\render('customer/addorderform.phtml');
+	View\render();
 }
 
 function addorder($params)

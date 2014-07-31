@@ -34,15 +34,26 @@ function dispatch($request)
 		}
 	}
 	
-	$controller_file = '../application/controllers/' . $controller . 'Controller.php';
-	if(file_exists($controller_file))
-	{
-		require_once $controller_file;
-	}
-		
+	_require_controller_file($controller);
 	$callback = $controller  . 'Controller\\' . $action;
 	if (function_exists($callback))
 	{
 		return call_user_func($callback, $request['params']);
 	}
+	else 
+	{
+		$callback =  $config['defaultController'] . 'Controller\\' . $config['defaultAction'];
+		_require_controller_file($config['defaultController']);
+		return call_user_func($callback, $request['params']);
+	}
 }
+
+function _require_controller_file($name)
+{
+	$controller_file = '../application/controllers/' . $name . 'Controller.php';
+	if(file_exists($controller_file))
+	{
+		require_once $controller_file;
+	}
+}
+

@@ -9,12 +9,7 @@ use services\AuthService;
 
 function index()
 {
-	View\render('index/index.phtml');
-}
-
-function loginform()
-{
-	View\render('index/loginform.phtml');
+	View\render();
 }
 
 function login($params)
@@ -37,5 +32,5 @@ function login($params)
 function logout()
 {
 	AuthService\logout();
-	echo json_encode(array("status" => 1));
+	echo View\message(true);
 }

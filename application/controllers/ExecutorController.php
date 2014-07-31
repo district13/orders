@@ -14,6 +14,12 @@ use model\Agent;
 
 require_once 'models/Executors.php';
 use model\Executors;
+use IndexController\index;
+
+function index()
+{
+	View\render();
+}
 
 function orders()
 {
@@ -27,11 +33,6 @@ function orders()
 		);
 	}
 	echo json_encode($ordersArray);
-}
-
-function index()
-{
-	View\render('executor/index.phtml');
 }
 
 function work($params)
