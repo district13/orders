@@ -20,11 +20,18 @@ function loginform()
 function login($params)
 {
 	$user = AuthService\login($params["name"], $params["pass"]);
-	echo json_encode(array(
+	if(!$user) 
+	{
+		echo View\errorMessage();
+		return;
+	}
+	$data = array(
 			"id" => $user['id'],
 			"name" => $user['name'],
 			"role" => $user['role'],
-	));
+	);
+	
+	echo View\message(true, $data);
 }
 
 function logout()

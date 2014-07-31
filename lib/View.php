@@ -13,4 +13,17 @@ function render($template, $data = array())
 	echo ob_get_clean();
 }
 
+function message($value, $data = array())
+{
+	$resultArray = array("status" => $value);
+	if($data) $resultArray["data"] = $data;
+	return json_encode($resultArray);
+}
+
+function errorMessage()
+{
+	return json_encode(array("status" => 0));
+}
+
+
 	

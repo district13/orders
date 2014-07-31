@@ -1,5 +1,26 @@
-<form action="/customer/addorder">
-	<input type="text" name="name" id="name">
-	<input type="text" name="price" id="price">
-	<input type="submit" value="добавить" id="addorder">
-</form>
+<h3 class="page-header">Опубликовать заказ</h3>
+
+
+<div class="container" id="addorder_container">
+	<form action="/customer/addorder" class="form-horizontal" role="form">
+	  <div class="form-group">
+	    <div class="col-sm-4">
+<!-- 		  <label class="control-label" for="name">Input with success</label>  -->
+	      <input type="text" class="form-control" name="name" id="name" placeholder="Название">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="col-sm-2">
+	      <input type="text" id="price" name="price" class="form-control" placeholder="Стоимость">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="col-sm-2">
+	      <button type="submit" id="addorder" class="btn btn-primary">Опубликовать</button>
+	    </div>
+	  </div>
+	</form>
+</div>
+
+<p id="alert_ok" style="display: none;" class="alert alert-success">Заказ опубликован</p>
+<p id="alert_error" style="display: none;" class="alert alert-danger">Что-то пошло не так, заказ не опубликован</p>

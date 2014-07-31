@@ -18,11 +18,17 @@ define([
 			app.session.on("change:is_auth", this.render);
         },
         
+        
         onLogin: function(event) {
             event.preventDefault();
+            if(!app.validateInput(this.$('input'))) return false;
+            
             var params = { name: this.$("#name").val(), pass: this.$("#pass").val() }
             app.session.login(params, function(response){
-            	
+            	if(!response.status) {
+            		this.$("#pass").val('');
+            		this.$("#pass").parent().addClass('has-error');
+            	}
             });
         },
 

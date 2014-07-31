@@ -16,6 +16,11 @@ function addorderform()
 
 function addorder($params)
 {
-	$result = Orders\add($params['name'], $params['price'], $_SESSION['user_id']);
-	echo json_encode(array("status" => $result));
+	if(!$params['name'] || !$params['price'])
+	{
+		echo View\errorMessage();
+		return;
+	}
+	$result = Orders\add($params['name'], (int)$params['price'], $_SESSION['user_id']);
+	echo View\message($result);
 }

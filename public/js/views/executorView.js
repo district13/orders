@@ -1,16 +1,15 @@
 define([
     "app",
     "backbone",
-    "views/listOrderView",
+    "views/order/listView",
     "text!templates/order/listWrap.html"
-], function(app, Backbone, ListOrderView, ListWrapTpl){
+], function(app, Backbone, orderListView, ListWrapTpl){
 
     var ExecutorView = Backbone.View.extend({
 		render: function(){
-			var listContent = new ListOrderView().render().el;
-console.log(listContent);			
+			var orderListContent = new orderListView().render().el;
 	 		this.$el.html(_.template(ListWrapTpl));
-	 		this.$("#wrap_thead").after(listContent);
+	 		this.$("#wrap_thead").after(orderListContent);
 	 		return this;
 		}
     });

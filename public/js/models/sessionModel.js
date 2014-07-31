@@ -28,8 +28,10 @@ define([
             	  data: params,
             	  type: "post",
             	  success: function(res){
-                	that.set({'user': new UserModel(res), is_auth: true});
-                	if(typeof callback === 'function') callback();
+            		if(res.status) {
+            			that.set({'user': new UserModel(res.data), is_auth: true});
+            		}
+                	if(typeof callback === 'function') callback(res);
                 },
             });
         },

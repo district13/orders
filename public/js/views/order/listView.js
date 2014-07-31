@@ -2,7 +2,7 @@ define([
     "app",
     "backbone",
     "collections/orderCollection",
-    "views/orderView",
+    "views/order/view",
 ], function(app, Backbone, OrderCollection, OrderView){
 
     var ListOrderView = Backbone.View.extend({

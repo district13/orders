@@ -1,7 +1,8 @@
 define([
+    "app",
     "backbone",
     "text!templates/order/one.html"
-], function(Backbone, OneTpl){
+], function(app, Backbone, OneTpl){
 	
 	var OrderView = Backbone.View.extend({
         events: {
@@ -27,6 +28,7 @@ define([
 		      		if(response.status == 1) {
 		    			 $(that.el).hide();
 					} else {
+						 app.alertError();
 	    			}
 	          	}
             });

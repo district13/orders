@@ -31,3 +31,10 @@ body {
   color: #fff;
   background-color: #428bca;
 }
+
+
+#addorder_container {
+	width: 800px;
+	margin-left: 0px;
+	padding-left: 0px;	
+}

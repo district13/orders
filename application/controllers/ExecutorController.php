@@ -36,8 +36,13 @@ function index()
 
 function work($params)
 {
+	if(!$params['order_id'])
+	{
+		echo View\errorMessage();
+		return;
+	}
 	$commission = Agent\getCommission();
-	$status = Orders\run($params["order_id"], $_SESSION['user_id'], $commission);
-	echo json_encode(array("status" => $status));
+	$result = Orders\run($params['order_id'], $_SESSION['user_id'], $commission);
+	echo View\message($result);
 }
 
