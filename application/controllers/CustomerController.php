@@ -8,11 +8,6 @@ require_once 'View.php';
 use View;
 
 
-function addorderform()
-{
-	View\render();
-}
-
 function addorder($params)
 {
 	if(!$params['name'] || !$params['price'])

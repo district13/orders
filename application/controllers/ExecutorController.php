@@ -16,11 +16,6 @@ require_once 'models/Executors.php';
 use model\Executors;
 use IndexController\index;
 
-function index()
-{
-	View\render();
-}
-
 function orders()
 {
 	$orders = Orders\getAllActive();
