@@ -3,6 +3,9 @@ namespace model\table\Gateway;
 
 require_once 'MysqlDriver.php';
 
+require_once 'Config.php';
+use Config;
+
 function query()
 {
 	$args = func_get_args();
@@ -13,24 +16,14 @@ function query()
 	return call_user_func_array($func, $args);
 }
 
-function get_connect($db)
+function get_connect($server_id)
 {
 	static $resources;
-if($db == 'orders') return testconnect($db);
-	if(isset($resources[$db])) return $resources[$db];
-	$link = mysqli_connect("localhost", "root", "123");
-	mysqli_select_db($link, $db);
-	$resources[$db] = $link;
+	if(isset($resources[$server_id])) return $resources[$server_id];
+	$config = Config\get();
+	$dbConfig = $config["db"][$server_id];
+	$link = mysqli_connect($dbConfig["host"], $dbConfig["user"], $dbConfig["pass"]);
+	mysqli_select_db($link, $dbConfig["name"]);
+	$resources[$server_id] = $link;
 	return $link;
-}
-
-function testconnect($db)
-{
-	static $resources;
-
-	if(isset($resources[$db])) return $resources[$db];
-	$dbh = mysqli_connect("188.120.244.226", "root", "123");
-	mysqli_select_db($dbh, $db);
-	$resources[$db] = $dbh;
-	return $dbh;
 }

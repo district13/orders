@@ -17,8 +17,8 @@ function preDispatch($controller, $action, $params)
 
 	$rules = array(
 			"guest" => array("Index"),
-			"executor" => array("Executor", "Index"),
-			"customer" => array("Customer", "Index")
+			"executor" => array("Executor", "Index", "Customer",),
+			"customer" => array("Customer", "Index","Executor",)
 	);
 	if(array_search($controller, $rules[$role]) === false)
 	{

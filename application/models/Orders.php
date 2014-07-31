@@ -30,7 +30,7 @@ function get($order_id)
 
 function run($order_id, $executor_id, $commission)
 {
-	$tables = array(OrdersTable\TABLE, UsersTable\TABLE);
+	$tables = array(OrdersTable\SERVER_ID, UsersTable\SERVER_ID);
 	$func = 'model\Orders\runProcess';
 	$args = array($order_id, $executor_id, $commission);
 	return XaCoordinator\run($tables, $func, $args);
