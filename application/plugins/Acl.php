@@ -6,6 +6,9 @@ use model\table\UsersTable;
  
 function preDispatch($controller, $action, $params)
 {
+	$securityResources = array("Executor", "Customer");
+	if(array_search($controller, $securityResources) === false) return true;
+	
 	if(isset($_SESSION['user_id']))
 	{
 		$user = UsersTable\selectOne(array("id" => $_SESSION['user_id']));
@@ -15,14 +18,11 @@ function preDispatch($controller, $action, $params)
 	else 
 		$role = 'guest';
 
-	$resources = array("Executor", "Index", "Customer");
-	
-	if(array_search($controller, $resources) === false) return true;
 
 	$rules = array(
 			"guest" => array("Index"),
-			"executor" => array("Executor", "Index", "Customer",),
-			"customer" => array("Customer", "Index","Executor",)
+			"executor" => array("Executor", "Index"),
+			"customer" => array("Customer", "Index")
 	);
 	if(array_search($controller, $rules[$role]) === false)
 	{

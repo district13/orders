@@ -39,6 +39,12 @@ function work($params)
 	}
 	$commission = Agent\getCommission();
 	$result = Orders\run($params['order_id'], $_SESSION['user_id'], $commission);
-	echo View\message($result);
+	if(!$result['process']) 
+	{
+		echo View\errorMessage();
+		return;
+	}
+	$_SESSION['money'] = $result['money'];
+	echo View\message($result['process'], array("money" => $result['money']));
 }
 

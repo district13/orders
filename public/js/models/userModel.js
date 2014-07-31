@@ -5,7 +5,8 @@ define([
     	defaults: {
     		id: 0,
     		name: '',
-    		role: 0
+    		role: 0,
+    		money: 0
     	}
     });
     return User;

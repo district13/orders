@@ -46,11 +46,12 @@ function runProcess($order_id, $executor_id, $commission)
 	);
 
 	$executor = UsersTable\selectOne(array("id" => $executor_id), true);
-	$executor["money"] += $order["price"] * $commission;
+	$money = $executor["money"] + $order["price"] * $commission;
 	$rowsUpdatedUsers =  Executors\update(
-			array("money" => $executor["money"]), 
+			array("money" => $money), 
 			$executor['id']
 	);
-	
-	return $rowsUpdatedUsers && $rowsUpdatedOrders;
+	$process = $rowsUpdatedUsers && $rowsUpdatedOrders;
+	if(!$process) $money = $executor["money"];
+	return array("process" => $process, "money" => $money);
 }

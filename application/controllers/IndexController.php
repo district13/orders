@@ -24,6 +24,7 @@ function login($params)
 			"id" => $user['id'],
 			"name" => $user['name'],
 			"role" => $user['role'],
+			"money" => $user['money'],
 	);
 	
 	echo View\message(true, $data);

@@ -16,6 +16,7 @@ define([
         initialize: function () {
             _.bindAll(this);
 			app.session.on("change:is_auth", this.render);
+			app.session.on("change:user.money", this.updateMoney);
         },
         
         
@@ -48,7 +49,12 @@ define([
         	} else 
         		this.$el.html(_.template(LoginTpl));
             return this;
+        },
+        
+        updateMoney: function() {
+        	this.$("#user_money").html(app.session.get('user.money'));
         }
+        
 
     });
 

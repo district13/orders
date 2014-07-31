@@ -27,6 +27,7 @@ define([
 	          	success: function(response){
 		      		if(response.status == 1) {
 		    			 $(that.el).hide();
+		    			 app.session.set('user.money', response.data.money);
 					} else {
 						 app.alertError();
 	    			}

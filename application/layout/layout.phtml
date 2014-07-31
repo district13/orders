@@ -10,7 +10,8 @@
 			var Viewer = {
 				id: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0?>,
 				role: <?php echo isset($_SESSION['role']) ? $_SESSION['role'] : 0?>,
-				name: <?php echo isset($_SESSION['name']) ? '"' . $_SESSION['name'] . '"' : '""'?>
+				name: <?php echo isset($_SESSION['name']) ? '"' . $_SESSION['name'] . '"' : '""'?>,
+				money: <?php echo isset($_SESSION['money']) ? $_SESSION['money'] : 0?>
 			}
 		</script>
 	</head>

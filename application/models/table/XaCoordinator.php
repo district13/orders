@@ -16,10 +16,10 @@ function run($tables, $func, $args)
 
 	$xid = getXid();
 	query($connections, "XA START", $xid);
-	$process = call_user_func_array($func, $args);
+	$data = call_user_func_array($func, $args);
 	query($connections, "XA END", $xid);
 	
-	if(!$process) return rollback($connections, $xid);
+	if(!$data["process"]) return rollback($connections, $xid);
 	
 	foreach ($connections as $connect)
 	{
@@ -27,14 +27,14 @@ function run($tables, $func, $args)
 		if(!$prepare) return rollback($connections, $xid);
 	}
 	query($connections, "XA COMMIT", $xid);
-	return true;
+	return $data;
 	
 }
 
 function rollback($connections, $xid)
 {
 	query($connections, "XA ROLLBACK", $xid);
-	return false;
+	return array("process" => false);
 }
 
 

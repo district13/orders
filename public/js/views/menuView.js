@@ -22,7 +22,10 @@ define([
         
         render:function () {
         	if(app.session.get('is_auth'))
-        		this.$el.html(_.template(MenuTpl));
+        	{
+        		var template = _.template(MenuTpl); 
+        		this.$el.html(template(app.session.get('user').toJSON()));
+        	}
         	else
         		this.$el.html('');
             return this;
