@@ -42,8 +42,8 @@ function run($order_id, $executor_id, $commission)
 {
 	//read
 	$memcached = _getMemcached();
-	$lockOrder = $memcached->add('lock_order3:' . $order_id, 1, 10);
-	$lockExecutor = $memcached->add('lock_executor3:' . $executor_id, 1, 10);
+	$lockOrder = $memcached->add('order_lock:' . $order_id, 1);
+	$lockExecutor = $memcached->add('executor_lock:' . $executor_id, 1);
 	if(!$lockOrder || !$lockExecutor) return fail();
 
 	$whereOrders = array('id' => $order_id, 'status' => 0, 'executor_id' => 0, 'transaction_id' => 0);
@@ -134,8 +134,8 @@ function rollback($transaction_id)
 function _unlock($order_id, $executor_id)
 {
 	$memcached = _getMemcached();
-	$memcached->delete('lock_order1:' . $order_id);
-	$memcached->delete('lock_executor1:' . $executor_id);
+	$memcached->delete('order_lock:' . $order_id);
+	$memcached->delete('executor_lock:' . $executor_id);
 }
 
 function _getMemcached()
