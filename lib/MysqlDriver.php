@@ -2,11 +2,10 @@
 namespace MysqlDriver;
 
 use model\table\UsersTable\update;
-function select($connect, $table, $where = array(), $lock = false)
+function select($connect, $table, $where = array())
 {		
 	$sqlWhere = getWhere($where);
 	$sql = "select * from $table $sqlWhere";
-	if($lock) $sql .= " for update";
 	$query = mysqli_query($connect, $sql);
 	$data = array();
 	while($row = mysqli_fetch_assoc($query))
@@ -21,7 +20,9 @@ function insert($connect, $table, $data)
 	$columns = implode(',', array_keys($data));
 	$values = quote(array_values($data));
 	$sql = "insert into $table ($columns) values ($values)";
-	return mysqli_query($connect, $sql);
+	mysqli_query($connect, $sql);
+	$insert_id = mysqli_insert_id($connect);
+	return $insert_id;
 }
 
 function update($connect, $table, $data, $where)

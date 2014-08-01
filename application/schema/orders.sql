@@ -5,5 +5,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `executor_id` int(10) NOT NULL,
   `price` int(11) NOT NULL,
   `status` int(11) NOT NULL,
+  `transaction_id` int(10) unsigned NOT NULL,
+  `version` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=95 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=108 ;

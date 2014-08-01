@@ -10,9 +10,11 @@ function run($tables, $func, $args)
 	foreach ($tables as $table)
 	{
 		$connect= Gateway\get_connect($table);
-		mysqli_query($connect, "SET AUTOCOMMIT=0");
 		$connections[] = $connect;
 	}
+	
+	
+	
 
 	$xid = getXid();
 	query($connections, "XA START", $xid);

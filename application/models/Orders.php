@@ -13,14 +13,24 @@ use model\table\UsersTable;
 require_once 'models/table/XaCoordinator.php';
 use model\table\XaCoordinator;
 
+require_once 'models/table/TransactionTable.php';
+use model\table\TransactionTable;
+use model\table\XaCoordinator\rollback;
+
+const START = 1,
+	  PREPARE = 2,
+	  COMMIT = 3,
+	  START_ROLLBACK = 4,
+	  END_ROLLBACK = 5;
+
 function getAllActive()
 {
-	return OrdersTable\select(array('status' => 0));	
+	return OrdersTable\select(array('status' => 0, 'transaction_id' => 0));	
 }
 
 function add($name, $price, $user_id)
 {
-	return OrdersTable\insert(array("name" => $name, "price" => $price, "customer_id" => $user_id));
+	return OrdersTable\insert(array('name' => $name, 'price' => $price, 'customer_id' => $user_id));
 }
 
 function get($order_id)
@@ -30,28 +40,134 @@ function get($order_id)
 
 function run($order_id, $executor_id, $commission)
 {
-	$tables = array(OrdersTable\SERVER_ID, UsersTable\SERVER_ID);
-	$func = 'model\Orders\runProcess';
-	$args = array($order_id, $executor_id, $commission);
-	return XaCoordinator\run($tables, $func, $args);
+	//read
+	$memcached = _getMemcached();
+	$lockOrder = $memcached->add('lock_order3:' . $order_id, 1, 10);
+	$lockExecutor = $memcached->add('lock_executor3:' . $executor_id, 1, 10);
+	if(!$lockOrder || !$lockExecutor) return fail();
+
+	$whereOrders = array('id' => $order_id, 'status' => 0, 'executor_id' => 0, 'transaction_id' => 0);
+	$order = OrdersTable\selectOne($whereOrders);
+	$whereExecutor = array('id' => $executor_id, 'transaction_id' => 0);
+	$executor = UsersTable\selectOne($whereExecutor);
+	
+	$money = $executor['money'] + round($order['price'] * $commission);
+	
+	
+	
+	//0
+	$transaction_id = TransactionTable\insert(array(
+				'executor_id' => $executor_id,
+				'order_id' => $order_id,
+				'executor_data' => serialize(array('money' => $executor['money'], 'version' => $executor['version'])),
+				'order_data' => serialize(array('status' => $order['status'], 
+												'executor_id' => $order['executor_id'], 
+												'version' => $order['version'],
+				)),
+				'status' => START,
+	));
+	if(!$transaction_id) return fail();
+	
+	
+	
+	//1 phase
+	$newVersionOrder = $order['version'] + 1;
+	$updateOrders = OrdersTable\update(
+			array('status' => 1, 
+				  'executor_id' => $executor_id, 
+				  'version' => $newVersionOrder,
+				  'transaction_id' => $transaction_id, 
+			), 
+			array_merge($whereOrders, array('version' => $order['version']))
+	);
+	$newVersionExecutor = $executor['version'] + 1;
+	$updateExecutor = UsersTable\update(
+			array('money' => $money,
+				  'version' => $newVersionExecutor,
+				  'transaction_id' => $transaction_id,
+			),
+			array_merge($whereExecutor, array('version' => $executor['version']))
+	);
+	
+	if(!$updateExecutor || !$updateOrders) return rollback($transaction_id);
+	
+	$isPrepare = TransactionTable\update(array("status" => PREPARE), array("id" => $transaction_id));
+	
+	$updateOrders = OrdersTable\update(
+			array("transaction_id" => 0), 
+			array("version" => $newVersionOrder, "id" => $order["id"])
+	);
+	$updateExecutor = UsersTable\update(
+			array("transaction_id" => 0), 
+			array("version" => $newVersionExecutor, "id" => $executor["id"])
+	);
+	if(!$updateOrders || !$updateExecutor || !$isPrepare) return rollback($transaction_id);
+	
+	
+	//2 phase
+	TransactionTable\update(array("status" => COMMIT), array("id" => $transaction_id));
+
+	_unlock($order_id, $executor_id);
+	return array("process" => true, "money" => $money);
 }
 
-function runProcess($order_id, $executor_id, $commission)
+function rollback($transaction_id)
 {
-	$whereOrders = array("id" => $order_id, "status" => 0);
-	$order = OrdersTable\selectOne($whereOrders, true);
-	$rowsUpdatedOrders = OrdersTable\update(
-			array("status" => 1),
-			$whereOrders
-	);
+	TransactionTable\update(array("status" => START_ROLLBACK), array("id" => $transaction_id));
+	$transactionData = TransactionTable\selectOne(array("id" => $transaction_id));
 
-	$executor = UsersTable\selectOne(array("id" => $executor_id), true);
-	$money = $executor["money"] + $order["price"] * $commission;
-	$rowsUpdatedUsers =  Executors\update(
-			array("money" => $money), 
-			$executor['id']
-	);
-	$process = $rowsUpdatedUsers && $rowsUpdatedOrders;
-	if(!$process) $money = $executor["money"];
-	return array("process" => $process, "money" => $money);
+	$orderData = array_merge(unserialize($transactionData["order_data"]), array("transaction_id" => 0));
+	$r1 = OrdersTable\update($orderData, array("id" => $transactionData["order_id"]));
+
+	$executorData = array_merge(unserialize($transactionData["executor_data"]), array("transaction_id" => 0));
+	$r2 = UsersTable\update($executorData, array("id" => $transactionData["executor_id"]));
+	
+	if($r1 && $r2)
+	{
+		TransactionTable\update(array("status" => END_ROLLBACK), array("id" => $transaction_id));
+	}
+
+	_unlock($transactionData["order_id"], $transactionData["executor_id"]);
+	return fail();
 }
+
+function _unlock($order_id, $executor_id)
+{
+	$memcached = _getMemcached();
+	$memcached->delete('lock_order1:' . $order_id);
+	$memcached->delete('lock_executor1:' . $executor_id);
+}
+
+function _getMemcached()
+{
+	static $instance;
+	if(!$instance) 
+	{
+		$instance = new \Memcached();
+		$instance->addServer('localhost', 11211);
+	}
+	return $instance;
+}
+
+function fail()
+{
+	return array("process" => false);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
