@@ -94,7 +94,7 @@ function run($order_id, $executor_id, $commission)
 			array_merge($whereExecutor)
 	);
 	
-	if(!$updateExecutor || !$updateOrders) return rollback($transaction_id);
+	if($updateExecutor != 1 || $updateOrders != 1) return rollback($transaction_id);
 	
 	$isPrepare = TransactionTable\update(array("status" => PREPARE), array("id" => $transaction_id));
 	
@@ -106,7 +106,7 @@ function run($order_id, $executor_id, $commission)
 			array("transaction_id" => 0), 
 			array("id" => $executor["id"])
 	);
-	if(!$updateOrders || !$updateExecutor || !$isPrepare) return rollback($transaction_id);
+	if($updateOrders != 1 || $updateExecutor != 1 || $isPrepare != 1) return rollback($transaction_id);
 	
 	
 	//2 phase
@@ -127,7 +127,7 @@ function rollback($transaction_id)
 	$executorData = array_merge(unserialize($transactionData["executor_data"]), array("transaction_id" => 0));
 	$r2 = UsersTable\update($executorData, array("id" => $transactionData["executor_id"]));
 	
-	if($r1 && $r2)
+	if($r1 == 1 && $r2 == 1)
 	{
 		TransactionTable\update(array("status" => END_ROLLBACK), array("id" => $transaction_id));
 	}
