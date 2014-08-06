@@ -92,12 +92,13 @@ function run($order_id, $executor_id, $commission)
 				  'transaction_id' => $transaction_id,
 			),
 			array_merge($whereExecutor)
-	);
-	
-	if($updateExecutor != 1 || $updateOrders != 1) return rollback($transaction_id);
-	
+	);	
 	$isPrepare = TransactionTable\update(array("status" => PREPARE), array("id" => $transaction_id));
 	
+	if($updateExecutor != 1 || $updateOrders != 1 || $isPrepare != 1) return rollback($transaction_id);
+	
+	
+	//2 phase
 	$updateOrders = OrdersTable\update(
 			array("transaction_id" => 0), 
 			array("id" => $order["id"])
@@ -106,12 +107,10 @@ function run($order_id, $executor_id, $commission)
 			array("transaction_id" => 0), 
 			array("id" => $executor["id"])
 	);
-	if($updateOrders != 1 || $updateExecutor != 1 || $isPrepare != 1) return rollback($transaction_id);
-	
-	
-	//2 phase
-	TransactionTable\update(array("status" => COMMIT), array("id" => $transaction_id));
+	$isCommit = TransactionTable\update(array("status" => COMMIT), array("id" => $transaction_id));
 
+	if($updateOrders != 1 || $updateExecutor != 1 || $isCommit != 1) return rollback($transaction_id);
+	
 	_unlockTransaction($order_id, $executor_id);
 	return array("process" => true, "money" => $money);
 }
