@@ -55,6 +55,11 @@ function run($order_id, $executor_id, $commission)
 	$order = OrdersTable\selectOne($whereOrders);
 	$whereExecutor = array('id' => $executor_id, 'transaction_id' => 0);
 	$executor = UsersTable\selectOne($whereExecutor);
+	if(!$order || !$executor)
+	{
+		_unlockTransaction($order_id, $executor_id);
+		return fail();
+	}
 	
 	$money = $executor['money'] + round($order['price'] * $commission);
 	
