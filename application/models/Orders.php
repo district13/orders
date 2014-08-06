@@ -73,7 +73,11 @@ function run($order_id, $executor_id, $commission)
 				)),
 				'status' => START,
 	));
-	if(!$transaction_id) return fail();
+	if(!$transaction_id) 
+	{
+		_unlockTransaction($order_id, $executor_id);
+		return fail();
+	}
 	
 
 	//1 phase
