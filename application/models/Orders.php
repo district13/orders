@@ -107,7 +107,7 @@ function run($order_id, $executor_id, $commission)
 	//2 phase
 	TransactionTable\update(array("status" => COMMIT), array("id" => $transaction_id));
 
-	_unlock($order_id, $executor_id);
+	_unlockTransaction($order_id, $executor_id);
 	return array("process" => true, "money" => $money);
 }
 
