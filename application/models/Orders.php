@@ -12,7 +12,6 @@ use model\table\UsersTable;
 
 require_once 'models/table/TransactionTable.php';
 use model\table\TransactionTable;
-use model\table\XaCoordinator\rollback;
 
 const START = 1,
 	  PREPARE = 2,
