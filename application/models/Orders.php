@@ -42,12 +42,15 @@ function run($order_id, $executor_id, $commission)
 {
 	//read
 	$memcached = _getMemcached(); 
-	$lockOrder = $memcached->add('order_lock:' . $order_id, 1);
-	$lockExecutor = $memcached->add('executor_lock:' . $executor_id, 1);
+	$order_key = _getKeyOrder($order_id);
+	$executor_key = _getKeyExecutor($executor_id);
+	
+	$lockOrder = $memcached->add($order_key, 1);
+	$lockExecutor = $memcached->add($executor_key, 1);
 	if(!$lockOrder || !$lockExecutor) 
 	{
-		if($lockOrder) 	$memcached->delete('order_lock:' . $order_id);
-		if($lockExecutor) $memcached->delete('executor_lock:' . $executor_id);
+		if($lockOrder) 	$memcached->delete($order_key);
+		if($lockExecutor) $memcached->delete($executor_key);
 		return fail();
 	}
 
@@ -64,7 +67,6 @@ function run($order_id, $executor_id, $commission)
 	$money = $executor['money'] + round($order['price'] * $commission);
 	
 	
-	
 	//0
 	$transaction_id = TransactionTable\insert(array(
 				'executor_id' => $executor_id,
@@ -77,8 +79,7 @@ function run($order_id, $executor_id, $commission)
 	));
 	if(!$transaction_id) return fail();
 	
-	
-	
+
 	//1 phase
 	$updateOrders = OrdersTable\update(
 			array('status' => 1, 
@@ -111,6 +112,7 @@ function run($order_id, $executor_id, $commission)
 
 	if($updateOrders != 1 || $updateExecutor != 1 || $isCommit != 1) return rollback($transaction_id);
 	
+	
 	_unlockTransaction($order_id, $executor_id);
 	return array("process" => true, "money" => $money);
 }
@@ -138,8 +140,9 @@ function rollback($transaction_id)
 function _unlockTransaction($order_id, $executor_id)
 {
 	$memcached = _getMemcached();
-	$memcached->delete('order_lock:' . $order_id);
-	$memcached->delete('executor_lock:' . $executor_id);
+	
+	$memcached->delete(_getKeyOrder($order_id));
+	$memcached->delete(_getKeyExecutor($executor_id));
 }
 
 function _getMemcached()
@@ -158,6 +161,15 @@ function fail()
 	return array("process" => false);
 }
 
+function _getKeyOrder($order_id)
+{
+	return 'order_lock:' . $order_id;
+}
+
+function _getKeyExecutor($executor_id)
+{
+	return 'executor_lock:' . $executor_id;
+}
 
 
 
