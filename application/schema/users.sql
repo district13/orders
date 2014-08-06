@@ -5,6 +5,5 @@ CREATE TABLE IF NOT EXISTS `users` (
   `role` int(11) NOT NULL,
   `pass` varchar(32) NOT NULL,
   `transaction_id` int(10) unsigned NOT NULL,
-  `version` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=14 ;

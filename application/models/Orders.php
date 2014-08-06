@@ -41,7 +41,7 @@ function get($order_id)
 function run($order_id, $executor_id, $commission)
 {
 	//read
-	$memcached = _getMemcached();
+	$memcached = _getMemcached(); 
 	$lockOrder = $memcached->add('order_lock:' . $order_id, 1);
 	$lockExecutor = $memcached->add('executor_lock:' . $executor_id, 1);
 	if(!$lockOrder || !$lockExecutor) return fail();
@@ -59,10 +59,9 @@ function run($order_id, $executor_id, $commission)
 	$transaction_id = TransactionTable\insert(array(
 				'executor_id' => $executor_id,
 				'order_id' => $order_id,
-				'executor_data' => serialize(array('money' => $executor['money'], 'version' => $executor['version'])),
+				'executor_data' => serialize(array('money' => $executor['money'])),
 				'order_data' => serialize(array('status' => $order['status'], 
 												'executor_id' => $order['executor_id'], 
-												'version' => $order['version'],
 				)),
 				'status' => START,
 	));
@@ -75,18 +74,15 @@ function run($order_id, $executor_id, $commission)
 	$updateOrders = OrdersTable\update(
 			array('status' => 1, 
 				  'executor_id' => $executor_id, 
-				  'version' => $newVersionOrder,
 				  'transaction_id' => $transaction_id, 
 			), 
-			array_merge($whereOrders, array('version' => $order['version']))
+			array_merge($whereOrders)
 	);
-	$newVersionExecutor = $executor['version'] + 1;
 	$updateExecutor = UsersTable\update(
 			array('money' => $money,
-				  'version' => $newVersionExecutor,
 				  'transaction_id' => $transaction_id,
 			),
-			array_merge($whereExecutor, array('version' => $executor['version']))
+			array_merge($whereExecutor)
 	);
 	
 	if(!$updateExecutor || !$updateOrders) return rollback($transaction_id);
@@ -95,11 +91,11 @@ function run($order_id, $executor_id, $commission)
 	
 	$updateOrders = OrdersTable\update(
 			array("transaction_id" => 0), 
-			array("version" => $newVersionOrder, "id" => $order["id"])
+			array("id" => $order["id"])
 	);
 	$updateExecutor = UsersTable\update(
 			array("transaction_id" => 0), 
-			array("version" => $newVersionExecutor, "id" => $executor["id"])
+			array("id" => $executor["id"])
 	);
 	if(!$updateOrders || !$updateExecutor || !$isPrepare) return rollback($transaction_id);
 	
