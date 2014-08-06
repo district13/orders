@@ -44,7 +44,12 @@ function run($order_id, $executor_id, $commission)
 	$memcached = _getMemcached(); 
 	$lockOrder = $memcached->add('order_lock:' . $order_id, 1);
 	$lockExecutor = $memcached->add('executor_lock:' . $executor_id, 1);
-	if(!$lockOrder || !$lockExecutor) return fail();
+	if(!$lockOrder || !$lockExecutor) 
+	{
+		if($lockOrder) 	$memcached->delete('order_lock:' . $order_id);
+		if($lockExecutor) $memcached->delete('executor_lock:' . $executor_id);
+		return fail();
+	}
 
 	$whereOrders = array('id' => $order_id, 'status' => 0, 'executor_id' => 0, 'transaction_id' => 0);
 	$order = OrdersTable\selectOne($whereOrders);
@@ -70,7 +75,6 @@ function run($order_id, $executor_id, $commission)
 	
 	
 	//1 phase
-	$newVersionOrder = $order['version'] + 1;
 	$updateOrders = OrdersTable\update(
 			array('status' => 1, 
 				  'executor_id' => $executor_id, 
@@ -123,11 +127,11 @@ function rollback($transaction_id)
 		TransactionTable\update(array("status" => END_ROLLBACK), array("id" => $transaction_id));
 	}
 
-	_unlock($transactionData["order_id"], $transactionData["executor_id"]);
+	_unlockTransaction($transactionData["order_id"], $transactionData["executor_id"]);
 	return fail();
 }
 
-function _unlock($order_id, $executor_id)
+function _unlockTransaction($order_id, $executor_id)
 {
 	$memcached = _getMemcached();
 	$memcached->delete('order_lock:' . $order_id);
