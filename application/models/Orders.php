@@ -10,9 +10,6 @@ use model\Executors;
 require_once 'models/table/UsersTable.php';
 use model\table\UsersTable;
 
-require_once 'models/table/XaCoordinator.php';
-use model\table\XaCoordinator;
-
 require_once 'models/table/TransactionTable.php';
 use model\table\TransactionTable;
 use model\table\XaCoordinator\rollback;
